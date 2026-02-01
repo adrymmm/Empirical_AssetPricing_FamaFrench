@@ -1,4 +1,7 @@
 import pandas as pd
+from utils.GRS.GRS import GRS
+import numpy as np
+import statsmodels.api as sm
 
 def ff_monthly_loader(path, skiprows):
     """ Loads monthly data from Ken French CSV file with multiple yearly/monthly data tables.
@@ -28,7 +31,46 @@ def ff_monthly_loader(path, skiprows):
     df = df.rename(columns={date_col: 'Date'})
     #Parsing to datetime
     df['Date'] = pd.to_datetime(df['Date'], format='%Y%m')
-    # Settin index
-    df = df.set_index('Date').sort_index()
 
     return df
+
+def create_coef_table(result: dict, factors: list[str]) -> pd.DataFrame:
+    """ Creates coefficient table from result dictionary """
+    rows = []
+
+    for p, m in result.items():
+        row = {
+            'Portfolio': p,
+            'alpha': m.params.get('const'),
+            't_alpha': m.tvalues.get('const'),
+            'p_alpha': round(m.pvalues.get('const'), 4),
+            'R2': m.rsquared,
+        }
+
+        # Additional betas
+        for f in factors:
+            row[f"beta{f}"] = m.params.get(f)
+
+        rows.append(row)
+
+    return pd.DataFrame(rows)
+
+def run_GRS(df, portfolio_cols, factor_cols):
+    """Fits time-series regressions for each portfolio and runs GRS test using alphas, residuals and factor returns"""
+    X = sm.add_constant(df[factor_cols])
+    T = df.shape[0]
+    N = len(portfolio_cols)
+
+    alphas = np.empty((N, 1), dtype=float)
+    resids = np.empty((T, N), dtype=float)
+
+    for j, p in enumerate(portfolio_cols):
+        y = df[p]
+        fit = sm.OLS(y, X).fit()
+        alphas[j, 0] = fit.params["const"]
+        resids[:, j] = fit.resid.to_numpy()
+
+    mu = df[factor_cols].to_numpy()
+    F_stat, pVal = GRS(alphas, resids, mu)
+
+    return F_stat, pVal, alphas, resids
