@@ -33,3 +33,25 @@ The factors are then constructed as such:
 These factors are used in time-series regressions where monthly returns on various portfolios are regressed on the
 returns of the risk factors. The coefficients estimated then represent **factor loadings**, the sensitivty of an asset's
 return to a given risk factor. 
+
+### The Pipeline
+#### 01_data_cleaning.ipynb
++ Import Fama-French FF5 and 25 size-to-book portfolio data
++ Parse dates and extract the correct table on **monthly data**
++ Save dataframes in .parquet format
+
+#### 02_replication.ipynb
++ Load processed dataframes
++ Restrict FF5 portfolio columns to only cover FF3 factors
++ Filter dates to date range Fama and French used (1963-1991)
++ Exploratory analysis with descriptive statistics
++ Regress **each portfolio's** excess return ($R_{i,t} - R_{f,t}$) on:
+  + Market excess return ($R_{M,t} - R_{f,t}$)
+  + Size factor (${SMB}_t$)
+  + Value factor (${HML}_t$)
++ Run CAPM regressions on each portfolio
++ Compare CAPM with FF3 on pricing errors (α) and explanatory power ($R^2$)
++ Run Gibson-Ross-Shanken (GRS) test for joint model validity
+
+### 03_extensions.ipynb
+
