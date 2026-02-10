@@ -55,6 +55,19 @@ def create_coef_table(result: dict, factors: list[str]) -> pd.DataFrame:
 
     return pd.DataFrame(rows)
 
+def summarise_table(coef_table: pd.DataFrame, sig_level: float = 0.05):
+    """
+    Summarises coefficient table giving mean absolute alpha, percentage of portfolios with significant alphas,
+    mean R squared and no. of portfolios.
+    """
+    rows = pd.Series({
+        'mean[|alpha|)' : coef_table['alpha'].abs().mean(),     # average of abs value
+        f"% sig alpha (<{sig_level})": (coef_table['p_alpha'] < sig_level).mean() * 100, # stat significant portfolio a
+        "mean(R2)": coef_table['R2'].mean(),
+        'n_portfolios' : len(coef_table),
+    })
+    return rows
+
 def run_GRS(df, portfolio_cols, factor_cols):
     """Fits time-series regressions for each portfolio and runs GRS test using alphas, residuals and factor returns"""
     X = sm.add_constant(df[factor_cols])
