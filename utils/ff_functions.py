@@ -61,7 +61,7 @@ def summarise_table(coef_table: pd.DataFrame, sig_level: float = 0.05):
     mean R squared and no. of portfolios.
     """
     rows = pd.Series({
-        'mean[|alpha|)' : coef_table['alpha'].abs().mean(),     # average of abs value
+        'mean(|alpha|)' : coef_table['alpha'].abs().mean(),     # average of abs value
         f"% sig alpha (<{sig_level})": (coef_table['p_alpha'] < sig_level).mean() * 100, # stat significant portfolio a
         "mean(R2)": coef_table['R2'].mean(),
         'n_portfolios' : len(coef_table),
