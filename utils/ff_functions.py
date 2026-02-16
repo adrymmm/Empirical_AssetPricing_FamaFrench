@@ -34,6 +34,30 @@ def ff_monthly_loader(path, skiprows):
 
     return df
 
+def ff_run_regression(p_df: pd.DataFrame, factors: list[str]):
+    """ Runs time-series regression with heteroskedasticity robust SEs and returns
+    results dictionary"""
+
+    # Creating results dictionary
+    results = {}
+
+    # Exclusion set of factor cols, Date
+    excl_set = ['Date'] + factors + ['RF']
+    p_cols = [c for c in p_df.columns if c not in excl_set]
+
+    for portfolio in p_cols:
+        Y = p_df[portfolio]
+        X = sm.add_constant(p_df[factors])
+
+        # Using heteroskedasticity robust SEs
+        model = sm.OLS(Y, X).fit(
+            cov_type='HAC',
+            cov_kwds={'maxlags': 12})
+
+        results[portfolio] = model
+
+    return results
+
 def create_coef_table(result: dict, factors: list[str]) -> pd.DataFrame:
     """ Creates coefficient table from result dictionary """
     rows = []
@@ -49,7 +73,7 @@ def create_coef_table(result: dict, factors: list[str]) -> pd.DataFrame:
 
         # Additional betas
         for f in factors:
-            row[f"beta{f}"] = m.params.get(f)
+            row[f"beta_{f}"] = m.params.get(f)
 
         rows.append(row)
 
