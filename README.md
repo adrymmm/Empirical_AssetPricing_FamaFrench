@@ -55,7 +55,19 @@ we reject then at least one portfolio is being priced with systematic error.
 
 ### The Pipeline
 #### 01_data_cleaning.ipynb
-+ Import Fama-French FF5 and 25 size-to-book portfolio data
++ Import Fama-French FF5 and 25 portfolio data
+  + 25 Portfolios 5x5 Size/ME 
+    + Portfolios formed from sort of stocks into five **size** quintiles and five **B/M** quintiles
+  + 25 Portfolios 5x5 Size/OP
+    + Portfolios from sort of stocks into five **size** quintiles and five **profitability** quintiles
+  + 25 Portfolios 5x5 Size/INV
+    + Portfolios from sort of stocks into five **size** quintiles and five **investment** quintiles
+  + 32 Portfolio 2x4x4 Size/ME/OP
+    + Portfolios from sort of stocks into two **size** groups and independently into four
+    **B/M** and four **profitability** groups
+  + 32 Portfolio 2x4x4 Size/ME/INV
+    + Portfolios from sort of stocks into two **size** groups and independently into four
+    **B/M** and four **investment** groups
 + Parse dates and extract the correct table on **monthly data**
 + Save dataframes in .parquet format
 
