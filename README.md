@@ -1,24 +1,27 @@
-## Reproduction and extension of common risk factors in the returns on stocks and bonds (Fama and French, 1993)
-### Paper Overview
-In Common Risk Factors in the Returns on Stocks and Bonds (1993), Fama and French identify patterns in average stock
-returns which the traditional Capital Asset Pricing Model fails to explain. In particular, they note that the market βs
-taken from the CAPM model show little explanatory paper on the average returns of U.S. stocks in their 
-cross-sectional analysis. They then determine two variables that reliably explain the cross-section of average returns:
+## Empirical Application of the Fama-French Three-Factor and Five-Factor Model
+### Overview
+The project is an implementation of the Three-Factor asset pricing model following the framework of Fama and French
+introduced in *Common Risk Factors in the Returns on Stocks and Bonds (1993).*
 
-+ Size (ME) - Market equity
-+ Book-to-Market Equity (BE/ME) - Ratio of the book value of a firm's stock to its market value
+The aim of the project is to assess the performance of factor-based models (FF3, FF5) as compared to the traditional
+Capital Asset Pricing Model (CAPM). The metric that they will be judged on is **systematic average pricing error**.
 
-They conclude that there is a negative relation between size and average return, and a strong positive relation between
-BE/ME and average return.
+Project Outline:
++ Estimation of CAPM, Fama-French Three-Factor (FF3) and Fama-French Five-Factor (FF5) models
++ Evaluation of pricing performance for each model across test portfolios
++ Comparison of systematic pricing error (α) across models
++ Gibbons-Ross-Shanken (GRS) test for joint model validity
 
-### Replication
-The project begins at the stage where Fama and French investigate proxies for common risk factors in average stock
-returns. The assumption is that if assets are priced rationally, such factors as firm size and BE/ME can accurately
-stand in for a firms sensitivity to undiversifiable risk factors, shared by all firms in the market. Since the risk 
-factors are not observable, Fama and French construct **factor-mimicking** portfolios to act as proxies. They begin by 
-ranking stocks by size and splitting them into a *Small* and *Big* group. They then sort the small and big stocks into 3
-book-to-market groups:Low, Medium and High. This results in the construction of six portfolios corresponding to stock
-size and BE/ME group.
+
+### Three-Factor Model Explained
+Fama and French argue that that firm size and book-to-market characteristic can accurately proxy for a firm's exposure to
+systematic risk. Since the risk 
+factors are not directly observable, they construct **factor-mimicking** portfolios to capture common sources of variation
+in stock returns. 
+
+Stocks are ranked market equity and divided into *Small* and *Big* groups. Each size group is then sorted into three
+book-to-market categories: Low, Medium and High. This results in the construction of six value-weighted portfolios
+corresponding to stock size and BE/ME group.
 
 The factors are then constructed as such:
 
@@ -30,26 +33,36 @@ The factors are then constructed as such:
 + High Minus Low (HML)
   + Monthly difference between the average returns of the two high BE/ME portfolios and the two low BE/ME portfolios.
 
-These factors are used in time-series regressions where monthly returns on various portfolios are regressed on the
-returns of the risk factors:
+These factors are used in time-series regressions where excess portfolio returns are regressed on the exposure to risk
+factors:
 
-$$R_i,t - R_f,t = α_i + β_iF_t + ε_i,t$$
+$$R_{i,t} - R_{f,t} = \alpha_i + \beta_{i,M}(R_M - R_f)_t + \beta_{i,S}SMB_t + \beta_{i,H}HML_t + \varepsilon_{i,t}$$
 
-The coefficients estimated then represent **factor loadings**, the sensitivty of an asset's
-return to a given risk factor.
+The coefficients estimated then represent **factor loadings**, the sensitivity of portfolio returns to each risk factor.
 
 Given that we are correctly appraising an asset the expected asset returns should be explained in full by the
 explanatory factors:
 
-$$E[R_i-R_f] = β_iE[f]$$
+$$E[R_{i,t} - R_{f,t}] =  E[\beta_{i,M}(R_M - R_f)_t] + E[\beta_{i,S}SMB_t] + E[\beta_{i,H}HML_t]$$
 
-So that $α_i = 0$. Model quality is then evaluated on the systematic average pricing error of each portfolio: $α_i$.
-If alpha is small and significant we have a good indication that the model predicts returns accurately on average. The 
-Gibson-Ross-Shanken test is then testing the null that the alphas for all portfolios are jointly zero:
+So that $α_i = 0$.
+
+Model quality is then evaluated on the systematic average pricing error of each portfolio: $α_i$.
+If alpha is **not statistically significant from zero**, we have a good indication that the model predicts returns accurately on average. 
+
+The 
+**Gibbons-Ross-Shanken (GRS)** test is then testing the null hypothesis that the alphas for all portfolios are jointly zero:
+
 $$ H_0 : α_1 = α_2 =...= α_n=0 $$
+
 By failing to reject the null we receive a strong signal that the model is not pricing with systematic error, while if
 we reject then at least one portfolio is being priced with systematic error.
 
+### Five-Factor Extension
+The Fama-French Five-Factor Model adapted from *A five-factor asset pricing model (2015)* adds an additional two factors:
++ Profitability (RMW)
++ Investment (CMA)
+The extension adds two additional risk dimensions and the evaluation process is repeated
 
 ### Extension
 
@@ -71,11 +84,10 @@ we reject then at least one portfolio is being priced with systematic error.
 + Parse dates and extract the correct table on **monthly data**
 + Save dataframes in .parquet format
 
-#### 02_replication.ipynb
+#### 02_regressions.ipynb
 + Load processed dataframes
-+ Restrict FF5 portfolio columns to only cover FF3 factors
-+ Filter dates to date range Fama and French used (1963-1991)
-+ Exploratory analysis with descriptive statistics
++ WIPP...
++ Parse dates
 + Regress **each portfolio's** excess return ($R_{i,t} - R_{f,t}$) on:
   + Market excess return ($R_{M,t} - R_{f,t}$)
   + Size factor (${SMB}_t$)
@@ -84,5 +96,13 @@ we reject then at least one portfolio is being priced with systematic error.
 + Compare CAPM with FF3 on pricing errors (α) and explanatory power ($R^2$)
 + Run Gibson-Ross-Shanken (GRS) test for joint model validity
 
-### 03_extensions.ipynb
+### 03_GRS_test.ipynb
 
+### References
+Fama, E. F., & French, K. R. (1993).
+Common Risk Factors in the Returns on Stocks and Bonds.
+Journal of Financial Economics.
+
+Fama, E. F. & French, K. R. (2015)
+A five-factor asset pricing model.
+Journal of Financial Economics.
