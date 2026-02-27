@@ -1,5 +1,5 @@
 import pandas as pd
-from utils.GRS.GRS import GRS
+from utils.vendor.grs import GRS
 import numpy as np
 import statsmodels.api as sm
 
