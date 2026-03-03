@@ -1,0 +1,23 @@
+# Virtual environment
+.venv
+
+# Poetry cache
+.cache
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.idea/          # PyCharm
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
