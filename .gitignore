@@ -14,11 +14,10 @@ __pycache__/
 # Jupyter
 .ipynb_checkpoints/
 
-# IDE
-.idea/          # PyCharm
-.vscode/
+# IDEs
+.idea
+.vscode
 
 # OS
 .DS_Store
 Thumbs.db
-.idea
