@@ -34,20 +34,17 @@ def ff_monthly_loader(path, skiprows):
 
     return df
 
-def ff_run_regression(p_df: pd.DataFrame, factors: list[str]):
+def ff_run_regression(p_df: pd.DataFrame, factors_df: pd.DataFrame, factors: list[str]):
     """ Runs time-series regression with heteroskedasticity robust SEs and returns
     results dictionary"""
 
     # Creating results dictionary
     results = {}
-
-    # Exclusion set of factor cols, Date
-    excl_set = ['Date'] + factors + ['RF']
-    p_cols = [c for c in p_df.columns if c not in excl_set]
+    p_cols = [c for c in p_df.columns if c != "Date"]
 
     for portfolio in p_cols:
         Y = p_df[portfolio]
-        X = sm.add_constant(p_df[factors])
+        X = sm.add_constant(factors_df[factors])
 
         # Using heteroskedasticity robust SEs
         model = sm.OLS(Y, X).fit(
@@ -59,19 +56,20 @@ def ff_run_regression(p_df: pd.DataFrame, factors: list[str]):
     return results
 
 def create_coef_table(result: dict, factors: list[str]) -> pd.DataFrame:
-    """ Creates coefficient table from result dictionary """
+    """ Creates a coefficient table from the results dictionary """
     rows = []
 
     for p, m in result.items():
+        # p-Value
+        p_alpha = m.pvalues.get('const')
+
         row = {
             'Portfolio': p,
             'alpha': m.params.get('const'),
             't_alpha': m.tvalues.get('const'),
-            'p_alpha': round(m.pvalues.get('const'), 4),
+            'p_alpha': round(p_alpha, 4),
             'R2': m.rsquared,
         }
-
-        # Additional betas
         for f in factors:
             row[f"beta_{f}"] = m.params.get(f)
 
