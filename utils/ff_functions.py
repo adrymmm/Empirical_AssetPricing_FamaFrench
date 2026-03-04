@@ -37,6 +37,9 @@ def ff_monthly_loader(path, skiprows):
 def ff_run_regression(p_df: pd.DataFrame, factors_df: pd.DataFrame, factors: list[str]):
     """ Runs time-series regression with heteroskedasticity robust SEs and returns
     results dictionary"""
+    # Resetting index for alignment
+    p_df = p_df.reset_index(drop=True)
+    factors_df = factors_df.reset_index(drop=True)
 
     # Creating results dictionary
     results = {}
@@ -90,9 +93,13 @@ def summarise_table(coef_table: pd.DataFrame, sig_level: float = 0.05):
     })
     return rows
 
-def run_GRS(df, portfolio_cols, factor_cols):
+def run_GRS(df: pd.DataFrame, factors_df: pd.DataFrame, portfolio_cols, factor_cols):
     """Fits time-series regressions for each portfolio and runs GRS test using alphas, residuals and factor returns"""
-    X = sm.add_constant(df[factor_cols])
+    # Resetting index for alignment
+    df = df.reset_index(drop=True)
+    factors_df = factors_df.reset_index(drop=True)
+
+    X = sm.add_constant(factors_df[factor_cols])
     T = df.shape[0]
     N = len(portfolio_cols)
 
@@ -105,7 +112,7 @@ def run_GRS(df, portfolio_cols, factor_cols):
         alphas[j, 0] = fit.params["const"]
         resids[:, j] = fit.resid.to_numpy()
 
-    mu = df[factor_cols].to_numpy()
+    mu = factors_df[factor_cols].to_numpy()
     F_stat, pVal = GRS(alphas, resids, mu)
 
-    return F_stat, pVal, alphas, resids
+    return float(np.squeeze(F_stat)), float(np.squeeze(pVal)), alphas, resids
