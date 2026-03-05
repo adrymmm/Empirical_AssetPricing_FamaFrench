@@ -122,8 +122,41 @@ directly relevant. The size portfolio set remains the hardest to price across al
 ### How to Run
 
 1. Clone the repository
-2. Install dependencies with Poetry: `poetry install`
-3. Run notebooks in order: `01_data_cleaning.ipynb` → `02_regressions.ipynb` → `03_GRS_tests.ipynb`
+```bash
+   git clone https://github.com/adrymmm/Empirical_AssetPricing_FamaFrench.git
+   cd Empirical_AssetPricing_FamaFrench
+```
+
+2. Install dependencies
+```bash
+   poetry install
+```
+
+3. Download data from Kenneth French's Data Library and place in `data/raw/` — see the Data section
+
+4. Run notebooks in order
+```bash
+   jupyter notebook
+```
+   - `01_data_cleaning.ipynb` — loads and cleans raw data, saves to `data/processed/`
+   - `02_regressions.ipynb` — runs CAPM, FF3 and FF5 regressions, evaluates pricing errors
+   - `03_GRS_tests.ipynb` — runs GRS joint significance tests across all models
+
+### Data
+
+All data is sourced from [Kenneth French's Data Library](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html).
+
+Download the following files and place them in `data/raw/`:
+
+| File | Library Name |
+|------|-------------|
+| `25_Portfolios_5x5.csv` | 25 Portfolios Formed on Size and Book-to-Market (5 x 5) |
+| `25_Portfolios_ME_OP_5x5.csv` | 25 Portfolios Formed on Size and Operating Profitability (5 x 5) |
+| `25_Portfolios_ME_INV_5x5.csv` | 25 Portfolios Formed on Size and Investment (5 x 5) |
+| `F-F_Research_Data_5_Factors_2x3.csv` | Fama/French 5 Factors (2x3) |
+
+**Note:** Use the historical archive 2015 versions where available, as the methodology 
+changed after 2015. The analysis covers July 1963 - December 2013.
 
 ### References
 Fama, E. F., & French, K. R. (1993).
