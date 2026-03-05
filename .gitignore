@@ -21,3 +21,7 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+# Data files
+data/processed
+data/raw
