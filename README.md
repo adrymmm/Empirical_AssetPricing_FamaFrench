@@ -62,7 +62,8 @@ we reject then at least one portfolio is being priced with systematic error.
 The Fama-French Five-Factor Model adapted from *A five-factor asset pricing model (2015)* adds an additional two factors:
 + Profitability (RMW)
 + Investment (CMA)
-The extension adds two additional risk dimensions and the evaluation process is repeated
+  
+The evaluation process is then repeated with all five factors and the same portfolio sets.
 
 ## The Pipeline
 #### 01_data_cleaning.ipynb
