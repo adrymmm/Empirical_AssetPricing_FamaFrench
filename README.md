@@ -158,6 +158,26 @@ Download the following files and place them in `data/raw/`:
 
 **Note:** Use the historical archive 2015 versions where available, as the methodology 
 changed after 2015. The analysis covers July 1963 - December 2013.
+### Extension: Exploratory Analysis with Singular Value Decomposition
+In`notebooks/svd_factor_comparison.ipynb` we show how the FF5 risk factor structure emerges endogenously from the data,
+independent of Fama and French's theoretical framework.
+
+Running SVD on each of the three 25-portfolio return matrices recovers three latent factors. We then assess whether the
+relevant risk factor was recovered by correlating them with the FF5 factors:
+
+| Sort | SVD_1 | SVD_2 | SVD_3 |
+|------|-------|-------|-------|
+| ME/BEME | Mkt-RF (−0.93) | SMB (0.60) | HML (0.75) |
+| ME/INV  | Mkt-RF (0.94)  | SMB (0.77) | CMA (−0.82) |
+| ME/OP   | Mkt-RF (0.94)  | SMB (−0.77) | RMW (0.85) |
+
++ SVD_1 recovers the market factor across all three sorts
++ SVD_2 consistently recovers SMB, since size is always the first sort dimension 
++ SVD_3 recovers the sort-specific factor in each case: HML, CMA, and RMW respectively.
+
+The results suggest the FF5 risk factors are latent in the return covariance matrix 
+of the portfolios. They emerge endogenously from the data, independent of the 
+theoretical framework of Fama and French.
 
 ### References
 Fama, E. F., & French, K. R. (1993).
